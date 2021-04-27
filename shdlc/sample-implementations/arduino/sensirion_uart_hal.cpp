@@ -33,6 +33,15 @@
 #include "wiring_private.h"  // pinPeripheral() function
 #include <Arduino.h>
 
+namespace /*anon*/ {
+HardwareSerial * _serial = nullptr;
+} //anon
+
+void sensirion_set_serial_implementation(HardwareSerial * serial)
+{
+    _serial = &serial;
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -41,9 +50,9 @@ extern "C" {
 #include "sensirion_common.h"
 #include "sensirion_uart_hal.h"
 
-#define BAUDRATE 115200  // baud rate of SPS30
-#define PIN_UART_RX 11
-#define PIN_UART_TX 10
+//#define BAUDRATE 115200  // baud rate of SPS30
+//#define PIN_UART_RX 11
+//#define PIN_UART_TX 10
 
 /*
  * Create a new serial interface on pin 10 (TX) and 11 (RX)
@@ -56,11 +65,11 @@ extern "C" {
  *       see
  * http://www.fiz-ix.com/2012/12/arduino-uno-with-multiple-software-serial-devices/
  */
-Uart Serial2(&sercom1, PIN_UART_RX, PIN_UART_TX, SERCOM_RX_PAD_0,
-             UART_TX_PAD_2);
+// Uart Serial2(&sercom1, PIN_UART_RX, PIN_UART_TX, SERCOM_RX_PAD_0,
+//              UART_TX_PAD_2);
 
 void SERCOM1_Handler() {
-    Serial2.IrqHandler();
+    _serial->IrqHandler();
 }
 
 /**
@@ -80,13 +89,13 @@ int16_t sensirion_uart_select_port(uint8_t port) {
  * Return:      0 on success, an error code otherwise
  */
 int16_t sensirion_uart_open() {
-    Serial2.begin(BAUDRATE);
-    pinPeripheral(PIN_UART_TX, PIO_SERCOM);
-    pinPeripheral(PIN_UART_RX, PIO_SERCOM);
+    // Serial2.begin(BAUDRATE);
+    // pinPeripheral(PIN_UART_TX, PIO_SERCOM);
+    // pinPeripheral(PIN_UART_RX, PIO_SERCOM);
 
-    while (!Serial) {
-        delay(100);
-    }
+    // while (!Serial) {
+    //     delay(100);
+    // }
     return 0;
 }
 
@@ -96,7 +105,7 @@ int16_t sensirion_uart_open() {
  * Return:      0 on success, an error code otherwise
  */
 int16_t sensirion_uart_close() {
-    Serial2.end();
+    //Serial2.end();
     return 0;
 }
 
@@ -108,7 +117,7 @@ int16_t sensirion_uart_close() {
  * Return:      Number of bytes sent or a negative error code
  */
 int16_t sensirion_uart_tx(uint16_t data_len, const uint8_t* data) {
-    return Serial2.write(data, data_len);
+    return _serial->write(data, data_len);
 }
 
 /**
@@ -121,8 +130,8 @@ int16_t sensirion_uart_tx(uint16_t data_len, const uint8_t* data) {
 int16_t sensirion_uart_rx(uint16_t max_data_len, uint8_t* data) {
     int16_t i = 0;
 
-    while (Serial2.available() > 0 && i < max_data_len) {
-        data[i] = (uint8_t)Serial2.read();
+    while (_serial->available() > 0 && i < max_data_len) {
+        data[i] = (uint8_t)_serial->read();
         i++;
     }
 

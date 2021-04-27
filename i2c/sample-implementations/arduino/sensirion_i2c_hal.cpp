@@ -44,6 +44,15 @@
  * See this folder's README.md
  */
 
+namespace /*anon*/ {
+TwoWire * _wire = nullptr;
+} // anon
+
+void sensirion_set_i2c_implementation(TwoWire & wire)
+{
+    _wire = &wire;
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -53,8 +62,8 @@ extern "C" {
  * communication. After this function has been called, the functions
  * i2c_read() and i2c_write() must succeed.
  */
-void sensirion_i2c_init(void) {
-    Wire.begin();
+void sensirion_i2c_init() {
+    //Wire.begin();
 }
 
 /**
@@ -68,10 +77,10 @@ int8_t sensirion_i2c_read(uint8_t address, uint8_t *data, uint16_t count) {
     uint8_t rxByteCount = 0;
 
     // 2 bytes RH, 1 CRC, 2 bytes T, 1 CRC
-    Wire.requestFrom(address, count);
+    _wire->requestFrom(address, count);
 
-    while (Wire.available()) {  // wait till all arrive
-        readData[rxByteCount++] = Wire.read();
+    while (_wire->available()) {  // wait till all arrive
+        readData[rxByteCount++] = _wire->read();
         if (rxByteCount >= count)
             break;
     }
@@ -83,9 +92,9 @@ int8_t sensirion_i2c_read(uint8_t address, uint8_t *data, uint16_t count) {
 
 int8_t sensirion_i2c_write(uint8_t address, const uint8_t *data,
                            uint16_t count) {
-    Wire.beginTransmission(address);
-    Wire.write(data, count);
-    Wire.endTransmission();
+    _wire->beginTransmission(address);
+    _wire->write(data, count);
+    _wire->endTransmission();
 
     return 0;
 }
