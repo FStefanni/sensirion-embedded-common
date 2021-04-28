@@ -37,7 +37,7 @@ namespace /*anon*/ {
 HardwareSerial * _serial = nullptr;
 } //anon
 
-void sensirion_set_serial_implementation(HardwareSerial * serial)
+void sensirion_set_serial_implementation(HardwareSerial & serial)
 {
     _serial = &serial;
 }
