@@ -69,7 +69,7 @@ extern "C" {
 //              UART_TX_PAD_2);
 
 void SERCOM1_Handler() {
-    _serial->IrqHandler();
+    //_serial->IrqHandler();
 }
 
 /**
