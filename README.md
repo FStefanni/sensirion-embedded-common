@@ -1,13 +1,13 @@
 # SENSIRION EMBEDDED COMMON
 
-This library is a simple re-packaging of the [Sensirion Embedded Common library]
-(https://github.com/Sensirion/embedded-common) to simplify its integration in
-Arduino.
+This library is a simple re-packaging of the
+[Sensirion Embedded Common library](https://github.com/Sensirion/embedded-common)
+to simplify its integration in Arduino.
 
 The original code (which is distributed inder BSD license) is here slightly
 changed, to add some useful features.
 
-# Integration flow
+# Integration flow to update to latest sensirion version
 
 1. Set Sensirion remote:
    ```
